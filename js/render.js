@@ -56,10 +56,12 @@ function renderNav(activePage = 'index') {
         ${linksHTML}
         <li><a href="${activePage === 'index' ? '#contact' : 'index.html#contact'}" class="btn btn-primary btn-sm">Get a Quote</a></li>
       </ul>
-      <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Menu">
+      <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Menu"
+              aria-expanded="false" aria-controls="navLinks">
         <span></span><span></span><span></span>
       </button>
     </div>
+    <div class="nav-progress"><span id="navProgress"></span></div>
   `;
 
   // Nav scroll behaviour
@@ -71,15 +73,33 @@ function renderNav(activePage = 'index') {
   const toggle = document.getElementById('mobileToggle');
   const links = document.getElementById('navLinks');
   toggle?.addEventListener('click', () => {
-    toggle.classList.toggle('open');
-    links.classList.toggle('open');
+    const open = toggle.classList.toggle('open');
+    links.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', String(open));
   });
   links?.querySelectorAll('a').forEach(a =>
     a.addEventListener('click', () => {
       toggle.classList.remove('open');
       links.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
     })
   );
+
+  // Close the mobile menu on Escape or when clicking outside it
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || !links?.classList.contains('open')) return;
+    toggle.classList.remove('open');
+    links.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.focus();
+  });
+  document.addEventListener('click', e => {
+    if (!links?.classList.contains('open')) return;
+    if (e.target.closest('.nav-links') || e.target.closest('.mobile-menu-toggle')) return;
+    toggle.classList.remove('open');
+    links.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  });
 }
 
 /* ── Footer ───────────────────────────────────────────────── */
@@ -162,6 +182,11 @@ function renderProjects(filter = 'all') {
     : PROJECTS.filter(p => p.category.toLowerCase() === filter.toLowerCase() ||
                             p.tags.some(t => t.toLowerCase() === filter.toLowerCase()));
 
+  if (!filtered.length) {
+    el.innerHTML = `<p class="grid-empty">No projects in this category yet.</p>`;
+    return;
+  }
+
   el.innerHTML = filtered.map(p => `
     <div class="project-card reveal" data-category="${p.category}">
       <div class="project-image">
@@ -212,8 +237,8 @@ function renderTestimonials() {
 
   el.innerHTML = TESTIMONIALS.map(t => `
     <div class="testimonial-card reveal">
-      <div class="testimonial-stars">${R.stars(t.rating)}</div>
-      <p class="testimonial-text">"${R.esc(t.text)}"</p>
+      <div class="testimonial-stars" aria-label="${t.rating} out of 5">${R.stars(t.rating)}</div>
+      <p class="testimonial-text">${R.esc(t.text)}</p>
       <div class="testimonial-author">
         <div class="author-avatar">${t.initials}</div>
         <div class="author-info">
@@ -246,6 +271,10 @@ function renderProductsGrid(filter = 'all') {
   const filtered = filter === 'all'
     ? PRODUCTS
     : PRODUCTS.filter(p => p.category.toLowerCase() === filter.toLowerCase());
+
+  // The markup ships an empty state — show it when a filter matches nothing
+  const empty = document.getElementById('products-empty');
+  if (empty) empty.style.display = filtered.length ? 'none' : 'block';
 
   el.innerHTML = filtered.map(p => `
     <div class="product-card reveal" data-category="${p.category.toLowerCase()}">
@@ -348,7 +377,7 @@ function renderProductDetail() {
     <!-- Features -->
     <section class="product-features section-pad" id="features">
       <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
           <div class="section-tag">Features</div>
           <h2 class="section-title">Everything You Get</h2>
         </div>
@@ -367,7 +396,7 @@ function renderProductDetail() {
     ${product.screenshots?.length ? `
     <section class="product-screenshots section-pad">
       <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
           <div class="section-tag">Screenshots</div>
           <h2 class="section-title">See It In Action</h2>
         </div>
@@ -385,7 +414,7 @@ function renderProductDetail() {
     <!-- Pricing -->
     <section class="product-pricing section-pad" id="pricing">
       <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
           <div class="section-tag">Pricing</div>
           <h2 class="section-title">Simple, Transparent Pricing</h2>
         </div>
@@ -415,19 +444,20 @@ function renderProductDetail() {
     ${product.faq?.length ? `
     <section class="product-faq section-pad">
       <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
           <div class="section-tag">FAQ</div>
           <h2 class="section-title">Common Questions</h2>
         </div>
         <div class="faq-list">
           ${product.faq.map((item, i) => `
             <div class="faq-item reveal">
-              <button class="faq-question" onclick="toggleFaq(${i})">
+              <button class="faq-question" onclick="toggleFaq(${i})"
+                      aria-expanded="false" aria-controls="faq-answer-${i}">
                 <span>${R.esc(item.q)}</span>
-                <span class="faq-arrow" id="faq-arrow-${i}">↓</span>
+                <span class="faq-arrow" aria-hidden="true">↓</span>
               </button>
               <div class="faq-answer" id="faq-answer-${i}">
-                <p>${R.esc(item.a)}</p>
+                <div class="faq-answer-inner"><p>${R.esc(item.a)}</p></div>
               </div>
             </div>
           `).join('')}
@@ -531,16 +561,19 @@ function observeReveal() {
 /* ── FAQ Toggle ───────────────────────────────────────────── */
 function toggleFaq(index) {
   const answer = document.getElementById(`faq-answer-${index}`);
-  const arrow = document.getElementById(`faq-arrow-${index}`);
-  const isOpen = answer.classList.contains('open');
+  if (!answer) return;
+  const item = answer.closest('.faq-item');
+  const willOpen = !answer.classList.contains('open');
 
-  // Close all
-  document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
-  document.querySelectorAll('.faq-arrow').forEach(a => a.textContent = '↓');
+  // Close all — the arrow direction is handled by CSS off .faq-item.open
+  document.querySelectorAll('.faq-answer.open').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  document.querySelectorAll('.faq-question').forEach(q => q.setAttribute('aria-expanded', 'false'));
 
-  if (!isOpen) {
+  if (willOpen) {
     answer.classList.add('open');
-    if (arrow) arrow.textContent = '↑';
+    item?.classList.add('open');
+    item?.querySelector('.faq-question')?.setAttribute('aria-expanded', 'true');
   }
 }
 
@@ -565,8 +598,9 @@ function renderWhatsApp() {
   const el = document.getElementById('whatsapp-float');
   if (!el) return;
   el.innerHTML = `
+    <button class="to-top-btn" id="toTopBtn" aria-label="Back to top" title="Back to top">↑</button>
     <a href="https://wa.me/${SITE.whatsapp}?text=Hi%2C%20I'm%20interested%20in%20your%20services"
-       target="_blank" class="whatsapp-btn" aria-label="WhatsApp">
+       target="_blank" rel="noopener" class="whatsapp-btn" aria-label="Chat on WhatsApp">
       <svg width="28" height="28" viewBox="0 0 32 32" fill="white"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.832.736 5.488 2.02 7.796L0 32l8.416-1.984C10.656 31.144 13.248 31.8 16 31.8c8.836 0 16-7.164 16-16S24.836 0 16 0zm0 29.2c-2.464 0-4.784-.652-6.796-1.808l-.484-.288-4.96 1.336 1.36-4.816-.324-.508C3.524 20.984 2.8 18.56 2.8 16 2.8 8.716 8.716 2.8 16 2.8S29.2 8.716 29.2 16 23.284 29.2 16 29.2zM23.26 19.52c-.36-.18-2.12-1.04-2.46-1.16-.34-.12-.58-.18-.82.18-.24.36-.92 1.16-1.12 1.4-.2.24-.4.26-.76.08-.36-.18-1.54-.556-2.92-1.776-1.1-.956-1.84-2.136-2.04-2.496-.2-.36-.02-.56.16-.74.16-.16.36-.42.54-.62.18-.2.24-.34.36-.58.12-.24.06-.44-.04-.62-.1-.18-.82-1.94-1.12-2.66-.3-.7-.6-.6-.82-.6h-.66c-.24 0-.6.1-.94.46-.34.36-1.26 1.22-1.26 2.98s1.3 3.46 1.48 3.7c.18.24 2.5 3.82 6.04 5.38.82.36 1.46.56 1.96.68.82.26 1.58.22 2.18.12.66-.12 2.1-.78 2.4-1.5.3-.72.3-1.34.2-1.5-.1-.16.02-.54-.34-.72z"/></svg>
     </a>
   `;

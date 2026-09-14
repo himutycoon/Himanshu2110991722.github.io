@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <noscript><style>.reveal,.reveal-stagger>*{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
 
@@ -33,6 +34,13 @@
 
     <div class="hero-visual">
       <div class="hero-card">
+        <div class="hero-card-bar">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
+          <span class="hero-card-file">build.js</span>
+        </div>
+        <div class="hero-card-body">
         <pre class="hero-code"><span class="kw">const</span> <span class="fn">build</span> = <span class="kw">async</span> (idea) =&gt; {
   <span class="kw">const</span> product = <span class="kw">await</span> <span class="fn">design</span>(idea)
   <span class="kw">const</span> app     = <span class="kw">await</span> <span class="fn">develop</span>(product)
@@ -48,6 +56,7 @@
           <div class="hero-metric"><strong>100%</strong><span>Satisfaction</span></div>
           <div class="hero-metric"><strong>24/7</strong><span>Support</span></div>
         </div>
+        </div>
       </div>
     </div>
   </div>
@@ -61,7 +70,7 @@
 <!-- ── SERVICES ───────────────────────────────────────────── -->
 <section class="section-pad" id="services">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header reveal">
       <div class="section-tag">Services</div>
       <h2 class="section-title">What We Build</h2>
       <p class="section-desc">End-to-end development from idea to production — web, mobile, AI, and everything in between.</p>
@@ -73,7 +82,7 @@
 <!-- ── WORK ───────────────────────────────────────────────── -->
 <section class="section-pad" id="work" style="background:var(--c-bg-2)">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header reveal">
       <div class="section-tag">Work</div>
       <h2 class="section-title">Featured Projects</h2>
       <p class="section-desc">A selection of projects that shipped on time, on budget, and exceeded client expectations.</p>
@@ -86,7 +95,7 @@
 <!-- ── TESTIMONIALS ───────────────────────────────────────── -->
 <section class="section-pad" id="testimonials">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header reveal">
       <div class="section-tag">Testimonials</div>
       <h2 class="section-title">Client Success Stories</h2>
       <p class="section-desc">What our clients say after working with us.</p>
@@ -98,10 +107,10 @@
 <!-- ── SAAS ───────────────────────────────────────────────── -->
 <section class="section-pad" id="saas">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header reveal">
       <div class="section-tag">SaaS Tools</div>
       <h2 class="section-title">Hosted Products</h2>
-      <p class="section-desc" style="color:rgba(255,255,255,.55)">Subscription tools built by Codevera — ready to embed in your business today.</p>
+      <p class="section-desc">Subscription tools built by Codevera — ready to embed in your business today.</p>
     </div>
     <div id="saas-grid" class="saas-grid"></div>
   </div>
@@ -119,7 +128,7 @@
 <!-- ── BLOG PREVIEW ───────────────────────────────────────── -->
 <section class="section-pad" id="blog">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header reveal">
       <div class="section-tag">Blog</div>
       <h2 class="section-title">From the Workshop</h2>
       <p class="section-desc">Tutorials, insights, and behind-the-scenes from our team.</p>
@@ -134,7 +143,7 @@
 <!-- ── CONTACT ────────────────────────────────────────────── -->
 <section class="section-pad" id="contact">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header reveal">
       <div class="section-tag">Contact</div>
       <h2 class="section-title">Let's Talk</h2>
       <p class="section-desc">Have a project in mind? We'd love to hear from you.</p>
@@ -229,7 +238,7 @@
 
           <div class="form-group" style="margin-bottom:0">
             <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:500">
-              <input type="checkbox" id="whatsapp" name="whatsapp" value="yes" style="width:auto;accent-color:var(--c-accent)">
+              <input type="checkbox" id="whatsapp" name="whatsapp" value="yes">
               Send via WhatsApp instead of email
             </label>
           </div>

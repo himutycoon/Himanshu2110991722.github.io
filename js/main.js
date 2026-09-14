@@ -145,16 +145,86 @@ function initContactForm() {
   });
 }
 
+/* ── Motion preference ────────────────────────────────────── */
+const prefersReducedMotion = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 /* ── Smooth Scroll ────────────────────────────────────────── */
 function initSmoothScroll() {
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
-    const target = document.querySelector(a.getAttribute('href'));
+    const href = a.getAttribute('href');
+    if (!href || href === '#') return;          // bare "#" is not a valid selector
+    const target = document.querySelector(href);
     if (!target) return;
     e.preventDefault();
-    window.scrollTo({ top: target.offsetTop - 70, behavior: 'smooth' });
+    const navH = parseInt(getComputedStyle(document.documentElement)
+      .getPropertyValue('--nav-h'), 10) || 68;
+    window.scrollTo({
+      top: target.offsetTop - navH - 12,
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    });
+    history.replaceState(null, '', href);
   });
+}
+
+/* ── Scroll UI: progress bar + back-to-top ────────────────── */
+function initScrollUI() {
+  const bar = document.getElementById('navProgress');
+  const toTop = document.getElementById('toTopBtn');
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const y = window.scrollY;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+
+    if (bar) bar.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
+    if (toTop) toTop.classList.toggle('show', y > 600);
+  };
+
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
+
+  toTop?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  });
+
+  update();
+}
+
+/* ── Scrollspy: highlight the nav link for the section in view ── */
+function initScrollSpy() {
+  const links = [...document.querySelectorAll('.nav-links a[href*="#"]')]
+    .filter(a => !a.classList.contains('btn'));
+  if (!links.length) return;
+
+  const byHash = new Map();
+  const sections = [];
+  links.forEach(a => {
+    const hash = a.getAttribute('href').slice(a.getAttribute('href').indexOf('#'));
+    const section = document.querySelector(hash);
+    if (!section) return;
+    byHash.set(hash, a);
+    sections.push(section);
+  });
+  if (!sections.length) return;
+
+  const observer = new IntersectionObserver(entries => {
+    // Pick the entry closest to the top of the viewport among those visible
+    const visible = entries.filter(e => e.isIntersecting);
+    if (!visible.length) return;
+    const top = visible.reduce((a, b) =>
+      a.boundingClientRect.top < b.boundingClientRect.top ? a : b);
+    links.forEach(a => a.classList.remove('active'));
+    byHash.get('#' + top.target.id)?.classList.add('active');
+  }, { rootMargin: '-25% 0px -60% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
 }
 
 /* ── Scroll Animations ────────────────────────────────────── */
@@ -178,10 +248,15 @@ function animateCounters() {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
       const el = entry.target;
-      const raw = el.textContent;
-      const num = parseInt(raw.replace(/[^0-9]/g, ''), 10);
-      if (isNaN(num)) return;
-      const suffix = raw.replace(/[0-9]/g, '');
+      observer.unobserve(el);
+
+      // Only count up a plain "<digits><suffix>" value. Stripping non-digits
+      // from something like "24/7" would rebuild it as "247/".
+      const m = el.textContent.trim().match(/^(\d+)(\D*)$/);
+      if (!m || prefersReducedMotion()) return;
+
+      const num = parseInt(m[1], 10);
+      const suffix = m[2];
       let start = 0;
       const duration = 1200;
       const step = num / (duration / 16);
@@ -190,7 +265,6 @@ function animateCounters() {
         el.textContent = Math.round(start) + suffix;
         if (start >= num) clearInterval(timer);
       }, 16);
-      observer.unobserve(el);
     });
   }, { threshold: 0.5 });
   stats.forEach(el => observer.observe(el));
@@ -209,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderWhatsApp();
   initSmoothScroll();
   initScrollAnimations();
+  initScrollUI();
 
   // Page-specific
   switch (PAGE) {
@@ -222,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderBlog(3);
       initContactForm();
       animateCounters();
+      initScrollSpy();
       break;
 
     case 'products':
