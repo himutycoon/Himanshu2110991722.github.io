@@ -255,6 +255,20 @@ const PRODUCTS = [
 // ─── SAAS TOOLS ───────────────────────────────────────────────
 const SAAS_TOOLS = [
   {
+    icon: '🤖',
+    name: 'AI Chat Assistant',
+    tagline: 'An AI sales assistant for your website',
+    description: 'A 24/7 chat assistant trained on your products, SKUs, prices and policies. Answers customers instantly, captures quote requests and hands off to WhatsApp. Installed and maintained by us.',
+    price: 3999,
+    currency: '₹',
+    period: 'month',
+    freeTrialDays: 0,
+    ctaLabel: 'Get It for Your Site',
+    ctaHref: '#contact',
+    features: ['Knows your catalogue: live prices & stock', 'Editable knowledge base & rules', 'Quote capture with email alerts', 'WhatsApp hand-off', 'Setup, hosting & AI usage included'],
+    color: '#f59e0b',
+  },
+  {
     icon: '📋',
     name: 'LeadSync',
     tagline: 'Capture leads from any website',

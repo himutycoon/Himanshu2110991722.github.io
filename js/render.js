@@ -146,6 +146,17 @@ function renderFooter() {
           <li><a href="blog.html">Blog</a></li>
         </ul>
       </div>
+
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="terms.html">Terms &amp; Conditions</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="refund-policy.html">Refund &amp; Cancellation</a></li>
+          <li><a href="shipping-policy.html">Shipping &amp; Delivery</a></li>
+        </ul>
+      </div>
     </div>
 
     <div class="footer-bottom">
