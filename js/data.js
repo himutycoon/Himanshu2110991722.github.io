@@ -21,105 +21,260 @@ const SITE = {
 
 // ─── NAVIGATION ──────────────────────────────────────────────
 const NAV_LINKS = [
-  { label: 'Home',     href: 'index.html',    anchor: '#home' },
   { label: 'Services', href: 'index.html',    anchor: '#services' },
   { label: 'Work',     href: 'index.html',    anchor: '#work' },
-  { label: 'Products', href: 'products.html', anchor: '' },
   { label: 'SaaS',     href: 'index.html',    anchor: '#saas' },
-  { label: 'Blog',     href: 'blog.html',     anchor: '' },
+  { label: 'Process',  href: 'index.html',    anchor: '#process' },
+  { label: 'Products', href: 'products.html', anchor: '' },
   { label: 'Contact',  href: 'index.html',    anchor: '#contact' },
 ];
 
 // ─── SERVICES ────────────────────────────────────────────────
+// icon = key in ICONS (render.js). wide = spans two bento columns.
 const SERVICES = [
   {
-    icon: '🌐',
-    title: 'Web Development',
-    description: 'Full-stack web applications built with modern frameworks. From landing pages to complex SaaS platforms.',
-    features: ['React / Vue / Vanilla JS', 'Node.js / Python Backend', 'PostgreSQL / MongoDB', 'REST & GraphQL APIs'],
+    icon: 'web', wide: true,
+    title: 'Web Apps & Websites',
+    description: 'Fast, SEO-ready websites and full web applications, from a five-page business site to a multi-role platform with dashboards.',
+    features: ['Next.js', 'React', 'Node.js', 'Supabase', 'Firebase'],
   },
   {
-    icon: '📱',
-    title: 'Mobile Apps',
-    description: 'Cross-platform mobile applications for iOS and Android that users actually enjoy using.',
-    features: ['React Native', 'Flutter', 'Native iOS & Android', 'App Store Deployment'],
+    icon: 'mobile',
+    title: 'Android & iOS Apps',
+    description: 'Cross-platform mobile apps with one codebase, push notifications and Play Store / App Store release.',
+    features: ['React Native', 'Expo', 'Capacitor'],
   },
   {
-    icon: '🤖',
-    title: 'AI & Automation',
-    description: 'Intelligent systems, chatbots, and workflow automation that save time and cut operational costs.',
-    features: ['GPT / Claude Integration', 'Custom ML Models', 'Workflow Automation', 'Data Pipelines'],
+    icon: 'cart',
+    title: 'E-commerce Stores',
+    description: 'Online stores with catalogues, carts, checkout, inventory and order management.',
+    features: ['Stripe', 'Razorpay', 'PayPal'],
   },
   {
-    icon: '⚙️',
-    title: 'Custom Software',
-    description: 'Tailored enterprise solutions — CRMs, ERPs, inventory systems, and anything in between.',
-    features: ['Business Process Analysis', 'Legacy Modernisation', 'System Integration', 'Ongoing Maintenance'],
+    icon: 'ai', wide: true,
+    title: 'AI Chatbots & Assistants',
+    description: 'Assistants trained on your products, prices and policies that answer customers 24/7, capture leads and hand off to WhatsApp.',
+    features: ['OpenAI', 'Claude', 'RAG', 'Tool calling'],
   },
   {
-    icon: '🔌',
-    title: 'WordPress Plugins',
-    description: 'Premium, performance-optimised WordPress plugins for e-commerce, bookings, and business automation.',
-    features: ['WooCommerce Extensions', 'Custom Post Types', 'REST API Endpoints', 'Dokan / Multivendor'],
+    icon: 'saas',
+    title: 'SaaS Product Development',
+    description: 'From idea to a paid product: auth, roles, subscriptions, admin panel and analytics.',
+    features: ['Multi-tenant', 'Billing', 'Admin'],
   },
   {
-    icon: '☁️',
-    title: 'Cloud & DevOps',
-    description: 'Scalable cloud architecture, CI/CD pipelines, and infrastructure that grows with your business.',
-    features: ['AWS / GCP / Azure', 'Docker & Kubernetes', 'GitHub Actions CI/CD', '24/7 Monitoring'],
+    icon: 'bolt',
+    title: 'AI Automation',
+    description: 'Automate the repetitive work: document processing, lead routing, reports, email and WhatsApp flows.',
+    features: ['Workflows', 'APIs', 'Webhooks'],
+  },
+  {
+    icon: 'data',
+    title: 'Scraping & Data Pipelines',
+    description: 'Collect, clean and deliver data from websites and open-data portals on a schedule, into sheets, databases or dashboards.',
+    features: ['Python', 'Node.js', 'Excel / Sheets'],
+  },
+  {
+    icon: 'chart',
+    title: 'Dashboards & Internal Tools',
+    description: 'Admin panels, CRMs and ops tools that replace spreadsheets and paper registers.',
+    features: ['Role-based access', 'Reports', 'Exports'],
+  },
+  {
+    icon: 'card',
+    title: 'Payments & Subscriptions',
+    description: 'One-time payments, recurring billing, invoices and webhooks, integrated properly and tested.',
+    features: ['Stripe', 'Razorpay', 'PayPal'],
+  },
+  {
+    icon: 'pen',
+    title: 'UI/UX & Brand Sites',
+    description: 'Interfaces that look premium and convert: design systems, landing pages and product UI.',
+    features: ['Design systems', 'Motion', 'Accessibility'],
+  },
+  {
+    icon: 'game',
+    title: 'Games & Interactive',
+    description: 'Browser games and interactive experiences, including real-time multiplayer.',
+    features: ['Phaser', 'WebSockets'],
+  },
+  {
+    icon: 'shield',
+    title: 'Hosting & Maintenance',
+    description: 'Deployment, monitoring, backups, updates and support after launch, on monthly plans.',
+    features: ['Vercel', 'Hostinger', 'Firebase'],
   },
 ];
 
-// ─── PROJECTS ────────────────────────────────────────────────
+// ─── PROJECTS (real work) ────────────────────────────────────
+// mock: 'browser' | 'phone' | 'data' | 'icon' (drawn in CSS, no screenshots needed)
 const PROJECTS = [
   {
-    id: 'localfind',
-    title: 'LocalFind Marketplace',
+    id: 'careby',
+    title: 'CareBy Supplies',
+    client: 'Client project · Ontario, Canada',
+    category: 'E-commerce',
+    icon: '🏗️', color: '#f59e0b', mock: 'browser', year: 2026,
+    description: 'Building-materials store with homeowner and trade pricing, material estimates and an AI sales assistant that knows the whole catalogue.',
+    highlights: [
+      'Catalogue of 3,400+ products with separate homeowner and contractor pricing',
+      'AI assistant that answers from live prices, stock and SKUs, and captures quote requests',
+      'Material lists from room photos, contractor packages and drawing takeoffs',
+      'Card checkout, admin dashboard and an editable knowledge base for the bot',
+    ],
+    tags: ['Next.js', 'Supabase', 'Stripe', 'OpenAI'],
+    link: 'https://carebysupplies.com', linkLabel: 'Visit live site', live: true,
+    featured: true,
+  },
+  {
+    id: 'kabootar',
+    title: 'Kabootar',
+    client: 'Own product',
+    category: 'Marketplace',
+    icon: '🕊️', color: '#38bdf8', mock: 'browser', year: 2025,
+    description: 'Peer-to-peer intercity delivery: travellers with spare luggage space carry parcels for people who need them delivered.',
+    highlights: [
+      'Matches posted trips with parcel requests between cities',
+      'Real-time chat between sender and traveller',
+      'Web app plus an Android app',
+    ],
+    tags: ['React', 'Node.js', 'Socket.io', 'Firebase'],
+  },
+  {
+    id: 'uninest',
+    title: 'UniNest',
+    client: 'Built for Chitkara University students',
+    category: 'Mobile',
+    icon: '🏠', color: '#a78bfa', mock: 'phone', year: 2025,
+    description: 'Hostel and mess companion app for college students: today\'s menu, meal ratings, campus feed and short video stories.',
+    highlights: [
+      'Daily and weekly mess menu, meal ratings and live crowd levels',
+      'Announcements, polls and a community feed',
+      'Short-video campus stories',
+      'Web admin dashboard for hostel staff',
+    ],
+    tags: ['React Native', 'Expo', 'Firebase', 'Cloud Functions'],
+    featured: true,
+  },
+  {
+    id: 'digiregister',
+    title: 'DigiRegister',
+    client: 'For coaching institutes',
     category: 'SaaS',
-    description: 'Multi-vendor geo-location marketplace where users discover local vendors on an interactive map.',
-    longDescription: 'A full-featured marketplace platform built on WordPress + Dokan with custom LocalFind integration. Features real-time vendor mapping, product catalogues, WhatsApp ordering, and admin dashboards.',
-    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80',
-    tags: ['WordPress', 'Dokan', 'PHP', 'Maps API', 'WooCommerce'],
-    link: '#contact',
-    featured: true,
-    year: 2024,
+    icon: '📒', color: '#34d399', mock: 'phone', year: 2025,
+    description: 'Replaces a coaching teacher\'s paper attendance and fees register with a fast Android app.',
+    highlights: ['Attendance in a few taps', 'Fee tracking per student', 'Cloud sync and sign-in'],
+    tags: ['React', 'TypeScript', 'Capacitor', 'Firebase'],
   },
   {
-    id: 'ecommerce-platform',
-    title: 'Artisan Crafts Store',
-    category: 'E-Commerce',
-    description: 'Custom e-commerce platform that doubled sales within 3 months of launch.',
-    longDescription: 'Bespoke WooCommerce store with custom checkout flow, automated inventory management, and WhatsApp order notifications.',
-    image: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&q=80',
-    tags: ['WooCommerce', 'PHP', 'JavaScript', 'PayPal', 'Razorpay'],
-    link: '#contact',
-    featured: true,
-    year: 2024,
+    id: 'railnest',
+    title: 'RailNest',
+    client: 'Own product',
+    category: 'Mobile',
+    icon: '🚆', color: '#f472b6', mock: 'phone', year: 2025,
+    description: 'Offline-first railway companion app for Indian train travellers, built to work on patchy networks.',
+    highlights: ['Offline-first design', 'Android app from a web codebase'],
+    tags: ['React', 'TypeScript', 'Capacitor', 'Tailwind'],
   },
   {
-    id: 'crm-system',
-    title: 'StartupHub CRM',
-    category: 'Enterprise',
-    description: 'Custom CRM with automation workflows that saved the team 20+ hours per week.',
-    longDescription: 'Enterprise CRM built from scratch with lead management, task automation, email sequences, and analytics dashboards.',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80',
-    tags: ['React', 'Node.js', 'PostgreSQL', 'AWS'],
-    link: '#contact',
-    featured: true,
-    year: 2023,
+    id: 'lokaljobs',
+    title: 'LokalJobs',
+    client: 'Own product',
+    category: 'Marketplace',
+    icon: '🏪', color: '#fb923c', mock: 'browser', year: 2025,
+    description: 'Hyperlocal job marketplace connecting small businesses with job seekers nearby.',
+    highlights: ['Job seeker and business owner roles', 'OTP mobile login', 'Admin panel', 'Mobile-first, installable web app'],
+    tags: ['React', 'Vite', 'Firebase', 'PWA'],
   },
   {
-    id: 'ai-chatbot',
-    title: 'Support AI Assistant',
-    category: 'AI',
-    description: 'GPT-powered customer support chatbot handling 80% of queries automatically.',
-    longDescription: 'AI-driven support system with knowledge base ingestion, escalation logic, and CRM sync.',
-    image: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&q=80',
-    tags: ['Python', 'GPT-4', 'FastAPI', 'React'],
-    link: '#contact',
-    featured: false,
-    year: 2024,
+    id: 'qcommerce',
+    title: 'Q-Commerce Intelligence',
+    client: 'Data platform',
+    category: 'Data & AI',
+    icon: '📦', color: '#22d3ee', mock: 'data', year: 2026,
+    description: 'Tracks product availability across quick-commerce apps so brands can see where they are out of stock.',
+    highlights: ['Scheduled collection across platforms', 'Availability history in a database', 'Built as a monorepo of services'],
+    tags: ['TypeScript', 'Node.js', 'Supabase', 'Scraping'],
   },
+  {
+    id: 'permits',
+    title: 'Canada Permits Scraper',
+    client: 'Lead-generation tool',
+    category: 'Data & AI',
+    icon: '🏛️', color: '#60a5fa', mock: 'data', year: 2026,
+    description: 'Collects new building permits from Canadian city open-data portals into timestamped Excel reports.',
+    highlights: ['Real data only: cities without an API are skipped, never faked', 'Last 30 / 60 / 90-day reports', 'Auto-timestamped files'],
+    tags: ['Python', 'Open-data APIs', 'Excel'],
+  },
+  {
+    id: 'carcare',
+    title: 'Car Care Storefront',
+    client: 'D2C brand',
+    category: 'E-commerce',
+    icon: '🚗', color: '#ef4444', mock: 'browser', year: 2026,
+    description: 'Premium mobile-first storefront for a car-care brand, with free car-care tools and SEO landing pages.',
+    highlights: ['Shop, product pages, cart and checkout', 'Free car-care tools to pull in traffic', 'Small dependency footprint for speed'],
+    tags: ['React 19', 'TypeScript', 'Vite'],
+  },
+  {
+    id: 'chaoskarts',
+    title: 'Chaos Karts',
+    client: 'Original game',
+    category: 'Games',
+    icon: '🏎️', color: '#facc15', mock: 'icon', year: 2026,
+    description: 'Original browser multiplayer kart racing with combat. No install, play in the browser.',
+    highlights: ['Real-time multiplayer in the browser', 'Kart racing combined with combat'],
+    tags: ['Phaser 3', 'React', 'TypeScript', 'WebSockets'],
+  },
+  {
+    id: 'bunkmate',
+    title: 'BunkMate',
+    client: 'Student utility',
+    category: 'Utility',
+    icon: '📊', color: '#4ade80', mock: 'icon', year: 2025,
+    description: 'Attendance calculator that tells students how many classes they can still miss, and how many they need to attend.',
+    highlights: ['Instant attendance maths per subject'],
+    tags: ['React', 'Vite'],
+  },
+];
+
+// ─── SAAS WE BUILD ───────────────────────────────────────────
+const SAAS_WE_BUILD = [
+  { emoji: '🤖', title: 'AI support desk', description: 'A chatbot trained on your business that answers, sells and escalates.', proof: 'Live on CareBy Supplies' },
+  { emoji: '📒', title: 'Attendance & fees', description: 'For coaching centres, gyms, schools and academies.', proof: 'Like DigiRegister' },
+  { emoji: '🛒', title: 'Marketplaces', description: 'Two-sided platforms with listings, matching, chat and payments.', proof: 'Like Kabootar & LokalJobs' },
+  { emoji: '📅', title: 'Booking & appointments', description: 'Slots, reminders, payments and staff calendars.', proof: 'Clinics · salons · consultants' },
+  { emoji: '👥', title: 'CRM & lead tracking', description: 'Capture leads from your site and WhatsApp, follow up, close.', proof: 'Sales teams · agencies' },
+  { emoji: '📦', title: 'Inventory & ordering', description: 'Stock, purchase orders, suppliers and reorder alerts.', proof: 'Stores · distributors' },
+  { emoji: '📈', title: 'Data & monitoring', description: 'Track prices, availability or public records automatically.', proof: 'Like Q-Commerce Intelligence' },
+  { emoji: '🏠', title: 'Community & campus apps', description: 'Feeds, polls, announcements and stories for a closed community.', proof: 'Like UniNest' },
+];
+
+// ─── PROCESS ─────────────────────────────────────────────────
+const PROCESS = [
+  { title: 'Discover', description: 'A free call to understand the goal, users and budget. You get a written scope and quote.' },
+  { title: 'Design', description: 'Screens and flows you can click through before any code is written.' },
+  { title: 'Build', description: 'Weekly demos on a live link, so you see progress and steer early.' },
+  { title: 'Launch', description: 'Deployment, domain, app-store release and payments switched on.' },
+  { title: 'Grow', description: 'Monthly support, improvements and new features as you scale.' },
+];
+
+// ─── HOME FAQ ────────────────────────────────────────────────
+const HOME_FAQ = [
+  { q: 'How much does a project cost?', a: 'Business websites start around ₹25,000, web and mobile apps are usually ₹75,000 – ₹2,00,000+, and SaaS products are quoted after a scoping call. You get a fixed written quote before we start.' },
+  { q: 'How long does it take?', a: 'A website takes 1–3 weeks. An MVP app or SaaS usually takes 4–10 weeks, depending on features. You see working progress every week.' },
+  { q: 'Do you work with clients outside India?', a: 'Yes. We already build for clients in Canada, and work across time zones over WhatsApp, email and video calls. International payments are accepted.' },
+  { q: 'What happens after launch?', a: 'We offer monthly plans for hosting, monitoring, updates and new features, so your product keeps running smoothly.' },
+  { q: 'Can you add AI to my existing website or app?', a: 'Yes. We add AI assistants, smart search and automations to existing sites and apps without rebuilding them.' },
+];
+
+// ─── TECH STACK (marquee) ────────────────────────────────────
+const TECH = [
+  ['Next.js', '#ffffff'], ['React', '#61dafb'], ['React Native', '#61dafb'], ['TypeScript', '#3178c6'],
+  ['Node.js', '#68a063'], ['Supabase', '#3ecf8e'], ['Firebase', '#ffca28'], ['Python', '#ffd43b'],
+  ['OpenAI', '#10a37f'], ['Claude', '#d97757'], ['Stripe', '#635bff'], ['Razorpay', '#3395ff'],
+  ['PayPal', '#009cde'], ['Tailwind CSS', '#38bdf8'], ['Capacitor', '#53b9ff'], ['Phaser', '#8b5cf6'],
+  ['Socket.io', '#ffffff'], ['PostgreSQL', '#336791'],
 ];
 
 // ─── PRODUCTS ─────────────────────────────────────────────────
@@ -312,42 +467,6 @@ const SAAS_TOOLS = [
   },
 ];
 
-// ─── TESTIMONIALS ─────────────────────────────────────────────
-const TESTIMONIALS = [
-  {
-    text: 'Working with Codevera was exceptional. They transformed our vision into a beautiful, functional platform. The attention to detail and professional approach exceeded all expectations.',
-    name: 'Rahul Sharma',
-    role: 'Sales Director',
-    company: 'TechCorp India',
-    initials: 'RS',
-    rating: 5,
-  },
-  {
-    text: "The e-commerce platform Codevera delivered completely transformed our business. Sales doubled within three months, and the system handles everything seamlessly. Highly recommended!",
-    name: 'Priya Mehta',
-    role: 'Founder',
-    company: 'Artisan Crafts',
-    initials: 'PM',
-    rating: 5,
-  },
-  {
-    text: "Outstanding work on our CRM. The automation has saved our team countless hours, and the intuitive interface made adoption incredibly smooth. Great communication throughout.",
-    name: 'Amit Kumar',
-    role: 'CTO',
-    company: 'StartupHub',
-    initials: 'AK',
-    rating: 5,
-  },
-  {
-    text: "The LocalFind plugin is exactly what we needed. Our vendors are visible on the map within minutes of setup. Support was responsive and the code quality is excellent.",
-    name: 'Deepak Verma',
-    role: 'Marketplace Owner',
-    company: 'LocalMart',
-    initials: 'DV',
-    rating: 5,
-  },
-];
-
 // ─── BLOG POSTS ───────────────────────────────────────────────
 const BLOG_POSTS = [
   {
@@ -418,10 +537,10 @@ const BLOG_POSTS = [
   },
 ];
 
-// ─── STATS ────────────────────────────────────────────────────
+// ─── STATS (counted from the real work above) ───────────────
 const STATS = [
-  { number: '10+', label: 'Projects Shipped' },
-  { number: '100%', label: 'Client Satisfaction' },
-  { number: '3', label: 'Products Live' },
-  { number: '24/7', label: 'Support Available' },
+  { number: PROJECTS.length + '+', label: 'Products shipped' },
+  { number: new Set(PROJECTS.map(p => p.category)).size + '', label: 'Industries & domains' },
+  { number: '24h', label: 'Reply time' },
+  { number: '1:1', label: 'Founder-led delivery' },
 ];

@@ -270,9 +270,113 @@ function animateCounters() {
   stats.forEach(el => observer.observe(el));
 }
 
+/* ── Spotlight: cards glow where the cursor is ────────────── */
+function initSpotlight() {
+  document.addEventListener('pointermove', e => {
+    const card = e.target.closest?.('.spot');
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    card.style.setProperty('--my', `${e.clientY - r.top}px`);
+  }, { passive: true });
+}
+
+/* ── Hero: rotating word ("We build websites / apps / …") ── */
+function initRotator() {
+  const el = document.getElementById('rotator');
+  if (!el) return;
+  const words = JSON.parse(el.dataset.words || '[]');
+  if (words.length < 2 || prefersReducedMotion()) return;
+  let i = 0;
+  let current = el.querySelector('.word');
+  setInterval(() => {
+    i = (i + 1) % words.length;
+    const next = document.createElement('span');
+    next.className = 'word gradient-text in-start';
+    next.textContent = words[i];
+    el.appendChild(next);
+    current.classList.add('out');
+    setTimeout(() => next.classList.remove('in-start'), 30);
+    const old = current;
+    setTimeout(() => old.remove(), 600);
+    current = next;
+  }, 2600);
+}
+
+/* ── Hero: AI chat demo that plays like a real conversation ── */
+const CHAT_SCRIPT = [
+  { who: 'user', text: 'Do you have 1/2" drywall? What does it cost?' },
+  { who: 'bot', text: 'Yes! Here\'s what\'s in stock right now:' },
+  { who: 'product', name: 'Drywall Sheet 1/2" × 4\' × 8\'', price: '$17.98 / sheet' },
+  { who: 'user', text: 'I need 60 sheets delivered to Brampton.' },
+  { who: 'bot', text: 'Delivery is free over $500 🚚 I\'ve started a quote for 60 sheets. What\'s your name?' },
+];
+
+function initChatDemo() {
+  const body = document.getElementById('chat-body');
+  if (!body) return;
+  const esc = R.esc;
+
+  if (prefersReducedMotion()) {
+    body.innerHTML = CHAT_SCRIPT.map(chatLine).join('');
+    return;
+  }
+
+  let step = 0;
+  const tick = () => {
+    if (step >= CHAT_SCRIPT.length) {
+      setTimeout(() => { body.innerHTML = ''; step = 0; tick(); }, 4500);
+      return;
+    }
+    const line = CHAT_SCRIPT[step++];
+    if (line.who === 'user') {
+      body.insertAdjacentHTML('beforeend', chatLine(line));
+      setTimeout(tick, 900);
+    } else {
+      body.insertAdjacentHTML('beforeend', '<div class="typing"><span></span><span></span><span></span></div>');
+      setTimeout(() => {
+        body.querySelector('.typing')?.remove();
+        body.insertAdjacentHTML('beforeend', chatLine(line));
+        setTimeout(tick, line.who === 'product' ? 700 : 1300);
+      }, line.who === 'product' ? 300 : 1100);
+    }
+  };
+  setTimeout(tick, 700);
+
+  function chatLine(l) {
+    if (l.who === 'product') {
+      return `<div class="chat-product"><i></i><div><b>${esc(l.name)}</b>${esc(l.price)}</div><em>In stock</em></div>`;
+    }
+    return `<div class="bubble ${l.who}">${esc(l.text)}</div>`;
+  }
+}
+
+/* ── Work: open a case study from a card ─────────────────── */
+function initProjectModal() {
+  const grid = document.getElementById('projects-grid');
+  const modal = document.getElementById('project-modal');
+  if (!grid || !modal) return;
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('[data-project]');
+    if (card) openProject(card.dataset.project);
+  });
+  grid.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const card = e.target.closest('[data-project]');
+    if (!card) return;
+    e.preventDefault();
+    openProject(card.dataset.project);
+  });
+  modal.addEventListener('click', e => {
+    if (e.target === modal || e.target.closest('[data-close]')) closeProject();
+  });
+}
+
 /* ── Keyboard Accessibility ───────────────────────────────── */
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeLightbox();
+  if (e.key !== 'Escape') return;
+  closeLightbox();
+  if (typeof closeProject === 'function') closeProject();
 });
 
 /* ── Page Bootstrap ───────────────────────────────────────── */
@@ -282,22 +386,27 @@ document.addEventListener('DOMContentLoaded', () => {
   renderFooter();
   renderWhatsApp();
   initSmoothScroll();
-  initScrollAnimations();
   initScrollUI();
+  initSpotlight();
 
   // Page-specific
   switch (PAGE) {
     case 'index':
+      renderTech();
       renderStats();
       renderServices();
       renderProjectFilters();
       renderProjects();
-      renderTestimonials();
+      renderBuild();
       renderSaas();
-      renderBlog(3);
+      renderProcess();
+      renderHomeFaq();
       initContactForm();
       animateCounters();
       initScrollSpy();
+      initRotator();
+      initChatDemo();
+      initProjectModal();
       break;
 
     case 'products':

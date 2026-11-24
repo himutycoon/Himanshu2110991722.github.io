@@ -51,10 +51,10 @@ function renderNav(activePage = 'index') {
 
   nav.innerHTML = `
     <div class="nav-container">
-      <a href="index.html" class="logo">Codevera<span>.</span></a>
+      <a href="index.html" class="logo" aria-label="Codevera Solutions home"><span class="logo-mark" aria-hidden="true">C</span><span>Codevera<span class="dot">.</span></span></a>
       <ul class="nav-links" id="navLinks">
         ${linksHTML}
-        <li><a href="${activePage === 'index' ? '#contact' : 'index.html#contact'}" class="btn btn-primary btn-sm">Get a Quote</a></li>
+        <li><a href="${activePage === 'index' ? '#contact' : 'index.html#contact'}" class="btn btn-primary btn-sm">Start a project <span class="arrow">→</span></a></li>
       </ul>
       <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Menu"
               aria-expanded="false" aria-controls="navLinks">
@@ -110,25 +110,24 @@ function renderFooter() {
   footer.innerHTML = `
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="logo" style="margin-bottom:1rem">Codevera<span>.</span></div>
-        <p>Premium software development, products, and SaaS tools for ambitious businesses.</p>
+        <div class="logo"><span class="logo-mark" aria-hidden="true">C</span><span>Codevera<span class="dot">.</span></span></div>
+        <p>Websites, mobile apps, SaaS products and AI assistants, designed and built end to end by Codevera Solutions.</p>
         <div class="footer-social">
           <a href="https://wa.me/${SITE.whatsapp}" target="_blank" aria-label="WhatsApp" class="social-btn">
             <svg width="18" height="18" viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.164 0 0 7.164 0 16c0 2.832.736 5.488 2.02 7.796L0 32l8.416-1.984C10.656 31.144 13.248 31.8 16 31.8c8.836 0 16-7.164 16-16S24.836 0 16 0zm0 29.2c-2.464 0-4.784-.652-6.796-1.808l-.484-.288-4.96 1.336 1.36-4.816-.324-.508C3.524 20.984 2.8 18.56 2.8 16 2.8 8.716 8.716 2.8 16 2.8S29.2 8.716 29.2 16 23.284 29.2 16 29.2z"/></svg>
           </a>
           <a href="mailto:${SITE.email}" aria-label="Email" class="social-btn">✉</a>
-          <a href="#" aria-label="LinkedIn" class="social-btn">in</a>
-          <a href="#" aria-label="Twitter" class="social-btn">𝕏</a>
         </div>
       </div>
 
       <div class="footer-col">
         <h4>Company</h4>
         <ul>
-          <li><a href="index.html#home">Home</a></li>
           <li><a href="index.html#services">Services</a></li>
-          <li><a href="index.html#work">Work</a></li>
-          <li><a href="index.html#contact">Contact</a></li>
+          <li><a href="index.html#work">Our work</a></li>
+          <li><a href="index.html#build">SaaS we build</a></li>
+          <li><a href="index.html#process">Process</a></li>
+          <li><a href="index.html#contact">Start a project</a></li>
         </ul>
       </div>
 
@@ -143,7 +142,6 @@ function renderFooter() {
         <h4>SaaS Tools</h4>
         <ul>
           ${SAAS_TOOLS.map(t => `<li><a href="index.html#saas">${t.name}</a></li>`).join('')}
-          <li><a href="blog.html">Blog</a></li>
         </ul>
       </div>
 
@@ -171,9 +169,9 @@ function renderServices() {
   const el = document.getElementById('services-grid');
   if (!el) return;
 
-  el.innerHTML = SERVICES.map(s => `
-    <div class="service-card reveal">
-      <div class="service-icon">${s.icon}</div>
+  el.innerHTML = SERVICES.map((s, i) => `
+    <div class="service-card spot reveal ${s.wide ? 'wide' : ''}" style="--d:${(i % 4) * 0.06}s">
+      <div class="service-icon">${ICONS[s.icon] || ICONS.web}</div>
       <h3>${R.esc(s.title)}</h3>
       <p>${R.esc(s.description)}</p>
       <ul class="service-features">
@@ -184,40 +182,104 @@ function renderServices() {
 }
 
 /* ── Projects / Work ──────────────────────────────────────── */
+/** A browser, phone or chart drawn in CSS, tinted with the project colour. */
+function projectMock(p) {
+  if (p.mock === 'phone') return `
+    <div class="mock mock-phone"><div class="notch"></div>
+      <div class="app-hdr">${p.icon}</div>
+      <div class="row"></div><div class="row"></div><div class="row" style="width:70%"></div>
+    </div>`;
+  if (p.mock === 'data') return `
+    <div class="mock mock-data">
+      ${[38, 62, 45, 80, 55, 92, 70, 100].map(h => `<span style="height:${h}%"></span>`).join('')}
+    </div>`;
+  if (p.mock === 'icon') return `<div class="mock-icon">${p.icon}</div>`;
+  return `
+    <div class="mock mock-browser">
+      <div class="mock-bar"><i></i><i></i><i></i></div>
+      <div class="mock-ui">
+        <div class="hero-blk">${p.icon}<span class="ln s" style="flex:1"></span></div>
+        <div class="card-blk"></div><div class="card-blk"></div>
+        <div class="ln"></div><div class="ln s"></div>
+      </div>
+    </div>`;
+}
+
+function projectVisual(p) {
+  return `
+    <div class="project-image" style="--accent:${p.color}">
+      <div class="project-overlay">
+        <span class="project-category">${R.esc(p.category)}</span>
+        <span class="project-year">${p.year}</span>
+      </div>
+      ${projectMock(p)}
+    </div>`;
+}
+
 function renderProjects(filter = 'all') {
   const el = document.getElementById('projects-grid');
   if (!el) return;
 
   const filtered = filter === 'all'
     ? PROJECTS
-    : PROJECTS.filter(p => p.category.toLowerCase() === filter.toLowerCase() ||
-                            p.tags.some(t => t.toLowerCase() === filter.toLowerCase()));
+    : PROJECTS.filter(p => p.category.toLowerCase() === filter.toLowerCase());
 
   if (!filtered.length) {
     el.innerHTML = `<p class="grid-empty">No projects in this category yet.</p>`;
     return;
   }
 
-  el.innerHTML = filtered.map(p => `
-    <div class="project-card reveal" data-category="${p.category}">
-      <div class="project-image">
-        <img src="${p.image}" alt="${R.esc(p.title)}" loading="lazy">
-        <div class="project-overlay">
-          <span class="project-category">${p.category}</span>
-        </div>
-      </div>
+  el.innerHTML = filtered.map((p, i) => `
+    <article class="project-card spot reveal ${p.featured && filter === 'all' ? 'featured' : ''}"
+             style="--d:${(i % 3) * 0.07}s" data-project="${p.id}" tabindex="0" role="button"
+             aria-label="Open case study: ${R.esc(p.title)}">
+      ${projectVisual(p)}
       <div class="project-info">
-        <h3>${R.esc(p.title)}</h3>
+        <span class="client">${R.esc(p.client)}</span>
+        <h3>${R.esc(p.title)} ${p.live ? '<span class="live-dot">Live</span>' : ''}</h3>
         <p>${R.esc(p.description)}</p>
         <div class="project-tags">
           ${p.tags.map(t => `<span class="tag">${R.esc(t)}</span>`).join('')}
         </div>
-        <a href="${p.link}" class="project-link">View Project →</a>
+        <span class="project-link">View case study <span class="arrow">→</span></span>
       </div>
-    </div>
+    </article>
   `).join('');
 
   observeReveal();
+}
+
+/** Case-study modal for one project. */
+function openProject(id) {
+  const p = PROJECTS.find(x => x.id === id);
+  const modal = document.getElementById('project-modal');
+  if (!p || !modal) return;
+  modal.querySelector('.modal-card').innerHTML = `
+    <button class="modal-close" aria-label="Close" data-close>✕</button>
+    ${projectVisual(p)}
+    <div class="modal-body">
+      <span style="font-family:var(--f-mono);font-size:12px;color:var(--ink-3)">${R.esc(p.client)}</span>
+      <h3>${R.esc(p.title)} ${p.live ? '<span class="live-dot">Live</span>' : ''}</h3>
+      <p>${R.esc(p.description)}</p>
+      <ul>${p.highlights.map(h => `<li>${R.esc(h)}</li>`).join('')}</ul>
+      <div class="project-tags">${p.tags.map(t => `<span class="tag">${R.esc(t)}</span>`).join('')}</div>
+      <div class="modal-actions">
+        ${p.link ? `<a class="btn btn-primary" href="${p.link}" target="_blank" rel="noopener">${R.esc(p.linkLabel || 'Visit')} <span class="arrow">→</span></a>` : ''}
+        <a class="btn btn-secondary" href="#contact" data-close>Build something like this</a>
+      </div>
+    </div>`;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  modal.querySelector('.modal-close').focus();
+}
+
+function closeProject() {
+  const modal = document.getElementById('project-modal');
+  if (!modal || !modal.classList.contains('open')) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
 }
 
 /* ── Project filter buttons ───────────────────────────────── */
@@ -241,33 +303,13 @@ function renderProjectFilters() {
   });
 }
 
-/* ── Testimonials ─────────────────────────────────────────── */
-function renderTestimonials() {
-  const el = document.getElementById('testimonials-grid');
-  if (!el) return;
-
-  el.innerHTML = TESTIMONIALS.map(t => `
-    <div class="testimonial-card reveal">
-      <div class="testimonial-stars" aria-label="${t.rating} out of 5">${R.stars(t.rating)}</div>
-      <p class="testimonial-text">${R.esc(t.text)}</p>
-      <div class="testimonial-author">
-        <div class="author-avatar">${t.initials}</div>
-        <div class="author-info">
-          <h4>${R.esc(t.name)}</h4>
-          <p>${R.esc(t.role)}, ${R.esc(t.company)}</p>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
 /* ── Stats ────────────────────────────────────────────────── */
 function renderStats() {
   const el = document.getElementById('stats-grid');
   if (!el) return;
 
   el.innerHTML = STATS.map(s => `
-    <div class="stat-item">
+    <div class="stat-item reveal">
       <div class="stat-number">${s.number}</div>
       <div class="stat-label">${s.label}</div>
     </div>
@@ -504,7 +546,7 @@ function renderSaas() {
   if (!el) return;
 
   el.innerHTML = SAAS_TOOLS.map(t => `
-    <div class="saas-card reveal" style="--accent:${t.color}">
+    <div class="saas-card spot reveal" style="--accent:${t.color}">
       <div class="saas-icon">${t.icon}</div>
       <h3>${R.esc(t.name)}</h3>
       <p class="saas-tagline">${R.esc(t.tagline)}</p>
@@ -521,6 +563,74 @@ function renderSaas() {
     </div>
   `).join('');
 }
+
+/* ── Tech marquee ─────────────────────────────────────────── */
+function renderTech() {
+  const el = document.getElementById('tech-track');
+  if (!el) return;
+  const pills = TECH.map(([name, color]) =>
+    `<span class="tech-pill"><i style="background:${color}"></i>${R.esc(name)}</span>`).join('');
+  el.innerHTML = pills + pills; // doubled so the loop is seamless
+}
+
+/* ── SaaS we build ──────────────────────────────────────────── */
+function renderBuild() {
+  const el = document.getElementById('build-grid');
+  if (!el) return;
+  el.innerHTML = SAAS_WE_BUILD.map((b, i) => `
+    <div class="build-card spot reveal" style="--d:${(i % 4) * 0.06}s">
+      <span class="emoji">${b.emoji}</span>
+      <h3>${R.esc(b.title)}</h3>
+      <p>${R.esc(b.description)}</p>
+      <span class="proof">${R.esc(b.proof)}</span>
+    </div>`).join('');
+}
+
+/* ── Process ────────────────────────────────────────────────── */
+function renderProcess() {
+  const el = document.getElementById('process-steps');
+  if (!el) return;
+  el.innerHTML = PROCESS.map((s, i) => `
+    <div class="step reveal" style="--d:${i * 0.08}s">
+      <div class="step-num">0${i + 1}</div>
+      <h3>${R.esc(s.title)}</h3>
+      <p>${R.esc(s.description)}</p>
+    </div>`).join('');
+}
+
+/* ── Home FAQ ───────────────────────────────────────────────── */
+function renderHomeFaq() {
+  const el = document.getElementById('home-faq');
+  if (!el) return;
+  el.innerHTML = HOME_FAQ.map((item, i) => `
+    <div class="faq-item reveal">
+      <button class="faq-question" onclick="toggleFaq(${i})" aria-expanded="false" aria-controls="faq-answer-${i}">
+        <span>${R.esc(item.q)}</span><span class="faq-arrow" aria-hidden="true">↓</span>
+      </button>
+      <div class="faq-answer" id="faq-answer-${i}">
+        <div class="faq-answer-inner"><p>${R.esc(item.a)}</p></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── Icons (inline SVG, stroke style) ───────────────────────── */
+const ICONS = (() => {
+  const svg = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  return {
+    web: svg('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>'),
+    mobile: svg('<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>'),
+    cart: svg('<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.4 11.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.5L21 7H6"/>'),
+    ai: svg('<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>'),
+    saas: svg('<path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4 4 0 0 1-.5 9.5z"/><path d="M12 12v6M9.5 14.5 12 12l2.5 2.5"/>'),
+    bolt: svg('<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'),
+    data: svg('<ellipse cx="12" cy="5.5" rx="7.5" ry="2.5"/><path d="M4.5 5.5v6c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5v-6M4.5 11.5v6c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5v-6"/>'),
+    chart: svg('<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-7"/>'),
+    card: svg('<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6.5 15h4"/>'),
+    pen: svg('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'),
+    game: svg('<rect x="2" y="7" width="20" height="11" rx="4"/><path d="M7 11v3M5.5 12.5h3M15.5 12h.01M18 13.5h.01"/>'),
+    shield: svg('<path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>'),
+  };
+})();
 
 /* ── Blog Cards ───────────────────────────────────────────── */
 function renderBlog(limit = null) {
