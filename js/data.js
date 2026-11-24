@@ -139,6 +139,8 @@ const PROJECTS = [
       'Web app plus an Android app',
     ],
     tags: ['React', 'Node.js', 'Socket.io', 'Firebase'],
+    link: 'https://www.kabutar.in', linkLabel: 'Visit kabutar.in', live: true,
+    featured: true,
   },
   {
     id: 'uninest',
@@ -154,6 +156,7 @@ const PROJECTS = [
       'Web admin dashboard for hostel staff',
     ],
     tags: ['React Native', 'Expo', 'Firebase', 'Cloud Functions'],
+    link: 'https://www.unest.in', linkLabel: 'Visit unest.in', live: true,
     featured: true,
   },
   {
